@@ -1,0 +1,35 @@
+{
+  "name": "alexantr/yii2-ckeditor",
+  "description": "CKEditor widget for Yii 2",
+  "keywords": ["yii2", "widget", "ckeditor", "wysiwyg", "editor"],
+  "type": "yii2-extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Alex Yashkin",
+      "email": "alex@yashkin.by"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/alexantr/yii2-ckeditor/issues",
+    "source": "https://github.com/alexantr/yii2-ckeditor"
+  },
+  "require": {
+    "yiisoft/yii2": "~2.0.5",
+    "ckeditor/ckeditor": "^4.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "alexantr\\ckeditor\\": "src"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    },
+    "asset-installer-paths": {
+      "npm-asset-library": "vendor/npm",
+      "bower-asset-library": "vendor/bower"
+    }
+  }
+}
