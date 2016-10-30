@@ -2,7 +2,6 @@
 
 namespace alexantr\ckeditor;
 
-use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -21,16 +20,16 @@ class CKEditor extends InputWidget
     public $clientOptions = [];
 
     /**
-     * Use custom config and styles from this extension
-     * @var bool
+     * @var string Path to directory with custom CKEditor config.js, contents.css and styles.js files.
+     * Can be path to config file only. This directory or file will be published with AssetManager.
      */
-    public $useWidgetPreset = false;
+    public $presetPath;
 
     /**
-     * Disable config from app params
-     * @var bool
+     * @var string CKEditor styles name from custom styles.js
+     * @see http://docs.ckeditor.com/#!/api/CKEDITOR.config-cfg-stylesSet
      */
-    public $disableGlobalConfig = false;
+    public $presetStylesName = 'presetStyles';
 
     /**
      * @inheritdoc
@@ -55,15 +54,15 @@ class CKEditor extends InputWidget
         $view = $this->getView();
         CKEditorWidgetAsset::register($view);
 
-        $options = $this->prepareClientOptions();
+        $this->initPreset($view);
 
-        $encodedOptions = !empty($options) ? Json::encode($options) : '{}';
+        $encodedOptions = !empty($this->clientOptions) ? Json::encode($this->clientOptions) : '{}';
 
         $js = [];
         $js[] = "CKEDITOR.replace('$id', $encodedOptions);";
         $js[] = "alexantr.ckEditorWidget.registerOnChangeHandler('$id');";
 
-        if (isset($options['filebrowserUploadUrl']) || isset($options['filebrowserImageUploadUrl'])) {
+        if (isset($this->clientOptions['filebrowserUploadUrl']) || isset($this->clientOptions['filebrowserImageUploadUrl'])) {
             $js[] = "alexantr.ckEditorWidget.registerCsrfImageUploadHandler();";
         }
 
@@ -71,36 +70,43 @@ class CKEditor extends InputWidget
     }
 
     /**
-     * Prepare clientOptions
-     * @return array
+     * Set custom CKEditor files URLs to `clientOptions`.
+     * Example:
+     * ```
+     * [
+     *     'presetPath' => '@app/assets/foo-preset',
+     *     'presetStylesName' => 'fooStyles',
+     *     'clientOptions' => [
+     *         // ...
+     *     ],
+     * ]
+     * ```
+     * @param \yii\web\View $view
      */
-    protected function prepareClientOptions()
+    protected function initPreset($view)
     {
-        $view = $this->getView();
-
         $options = [];
 
-        // set custom widget config
-        if ($this->useWidgetPreset) {
-            $bundle = CKEditorPresetAsset::register($view);
-            if (is_file($bundle->basePath . '/config.js')) {
-                $options['customConfig'] = $bundle->baseUrl . '/config.js';
-            }
-            if (is_file($bundle->basePath . '/contents.css')) {
-                $options['contentsCss'] = $bundle->baseUrl . '/contents.css';
-            }
-            if (is_file($bundle->basePath . '/styles.js')) {
-                $options['stylesSet'] = 'presetStyles:' . $bundle->baseUrl . '/styles.js';
+        if ($this->presetPath !== null) {
+            $am = $view->getAssetManager();
+            list ($path, $url) = $am->publish($this->presetPath, [
+                'only' => ['config.js', 'contents.css', 'styles.js'],
+            ]);
+            if (is_dir($path)) {
+                if (is_file($path . DIRECTORY_SEPARATOR . 'config.js')) {
+                    $options['customConfig'] = $url . '/config.js';
+                }
+                if (is_file($path . DIRECTORY_SEPARATOR . 'contents.css')) {
+                    $options['contentsCss'] = $url . '/contents.css';
+                }
+                if (is_file($path . DIRECTORY_SEPARATOR . 'styles.js') && !empty($this->presetStylesName)) {
+                    $options['stylesSet'] = $this->presetStylesName . ':' . $url . '/styles.js';
+                }
+            } elseif (is_file($path)) {
+                $options['customConfig'] = $url;
             }
         }
 
-        // merge with config from app params
-        if (!$this->disableGlobalConfig && isset(Yii::$app->params['ckeditor.config']) && is_array(Yii::$app->params['ckeditor.config'])) {
-            $options = ArrayHelper::merge($options, Yii::$app->params['ckeditor.config']);
-        }
-
-        $options = ArrayHelper::merge($options, $this->clientOptions);
-
-        return $options;
+        $this->clientOptions = ArrayHelper::merge($options, $this->clientOptions);
     }
 }
