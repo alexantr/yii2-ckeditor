@@ -2,6 +2,7 @@
 
 namespace alexantr\ckeditor;
 
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -20,13 +21,20 @@ class CKEditor extends InputWidget
     public $clientOptions = [];
 
     /**
-     * @var string Path to directory with custom CKEditor config.js, contents.css and styles.js files.
-     * Can be path to config file only. This directory or file will be published with AssetManager.
+     * @var string the directory that contains custom CKEditor's config.js, contents.css and styles.js files.
+     * Can be direct path to CKEditor config file. This directory or file will be published by AssetManager if
+     * [[presetBaseUrl]] not set.
      */
-    public $presetPath;
+    public $presetBasePath;
 
     /**
-     * @var string CKEditor styles name from custom styles.js
+     * @var string the base URL for directory with custom CKEditor's config.js, contents.css and styles.js files.
+     * If [[presetBaseUrl]] is set, [[presetBasePath]] must be already Web-accessible.
+     */
+    public $presetBaseUrl;
+
+    /**
+     * @var string CKEditor styles name from custom styles.js.
      * @see http://docs.ckeditor.com/#!/api/CKEDITOR.config-cfg-stylesSet
      */
     public $presetStylesName = 'presetStyles';
@@ -71,10 +79,21 @@ class CKEditor extends InputWidget
 
     /**
      * Set custom CKEditor files URLs to `clientOptions`.
-     * Example:
+     * Example with directory containing the files is not Web-accessible:
      * ```
      * [
-     *     'presetPath' => '@app/assets/foo-preset',
+     *     'presetBasePath' => '@app/path/to/preset',
+     *     'presetStylesName' => 'fooStyles',
+     *     'clientOptions' => [
+     *         // ...
+     *     ],
+     * ]
+     * ```
+     * Example with [[presetBaseUrl]]:
+     * ```
+     * [
+     *     'presetBasePath' => '@webroot/path/to/preset',
+     *     'presetBaseUrl' => '@web/path/to/preset',
      *     'presetStylesName' => 'fooStyles',
      *     'clientOptions' => [
      *         // ...
@@ -85,26 +104,38 @@ class CKEditor extends InputWidget
      */
     protected function initPreset($view)
     {
-        $options = [];
+        if ($this->presetBasePath === null) {
+            return;
+        }
 
-        if ($this->presetPath !== null) {
+        if ($this->presetBaseUrl !== null) {
+            $path = Yii::getAlias($this->presetBasePath);
+            $url = Yii::getAlias($this->presetBaseUrl);
+        } else {
             $am = $view->getAssetManager();
-            list ($path, $url) = $am->publish($this->presetPath, [
+            list ($path, $url) = $am->publish($this->presetBasePath, [
                 'only' => ['config.js', 'contents.css', 'styles.js'],
             ]);
-            if (is_dir($path)) {
-                if (is_file($path . DIRECTORY_SEPARATOR . 'config.js')) {
-                    $options['customConfig'] = $url . '/config.js';
-                }
-                if (is_file($path . DIRECTORY_SEPARATOR . 'contents.css')) {
-                    $options['contentsCss'] = $url . '/contents.css';
-                }
-                if (is_file($path . DIRECTORY_SEPARATOR . 'styles.js') && !empty($this->presetStylesName)) {
-                    $options['stylesSet'] = $this->presetStylesName . ':' . $url . '/styles.js';
-                }
-            } elseif (is_file($path)) {
-                $options['customConfig'] = $url;
+        }
+
+        if (!$path || !$url) {
+            return;
+        }
+
+        $options = [];
+
+        if (is_dir($path)) {
+            if (is_file($path . DIRECTORY_SEPARATOR . 'config.js')) {
+                $options['customConfig'] = $url . '/config.js';
             }
+            if (is_file($path . DIRECTORY_SEPARATOR . 'contents.css')) {
+                $options['contentsCss'] = $url . '/contents.css';
+            }
+            if (is_file($path . DIRECTORY_SEPARATOR . 'styles.js') && !empty($this->presetStylesName)) {
+                $options['stylesSet'] = $this->presetStylesName . ':' . $url . '/styles.js';
+            }
+        } elseif (is_file($path)) {
+            $options['customConfig'] = $url;
         }
 
         $this->clientOptions = ArrayHelper::merge($options, $this->clientOptions);
