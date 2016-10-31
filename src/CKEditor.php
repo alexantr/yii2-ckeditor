@@ -2,6 +2,8 @@
 
 namespace alexantr\ckeditor;
 
+use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\widgets\InputWidget;
@@ -17,6 +19,22 @@ class CKEditor extends InputWidget
      * @see http://docs.ckeditor.com/#!/api/CKEDITOR.config
      */
     public $clientOptions = [];
+
+    /**
+     * @var string param name in `Yii::$app->params` with CKEditor predefined config.
+     */
+    public $presetName;
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        if ($this->presetName !== null && isset(Yii::$app->params[$this->presetName]) && is_array(Yii::$app->params[$this->presetName])) {
+            $this->clientOptions = ArrayHelper::merge(Yii::$app->params[$this->presetName], $this->clientOptions);
+        }
+    }
 
     /**
      * @inheritdoc

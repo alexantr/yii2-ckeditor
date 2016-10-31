@@ -47,3 +47,16 @@ If you want to use the CKEditor widget in an ActiveForm, it can be done like thi
 ```php
 <?= $form->field($model, 'attributeName')->widget(alexantr\ckeditor\CKEditor::className()) ?>
 ```
+
+## Using global configuration
+
+To avoid repeating identical configuration in every widget you can set global configuration in
+`Yii::$app->params`. Options from widget's `clientOptions` will be merged with this configuration. Use `presetName`
+attribute for this functionality:
+
+```php
+<?= alexantr\ckeditor\CKEditor::widget([
+    'name' => 'attributeName',
+    'presetName' => 'ckeditor.customConfig', // will use global config from Yii::$app->params['ckeditor.customConfig']
+]) ?>
+```
