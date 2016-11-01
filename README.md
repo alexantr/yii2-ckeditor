@@ -57,6 +57,24 @@ attribute for this functionality:
 ```php
 <?= alexantr\ckeditor\CKEditor::widget([
     'name' => 'attributeName',
-    'presetName' => 'ckeditor.customConfig', // will use global config from Yii::$app->params['ckeditor.customConfig']
+    'presetName' => 'ckeditor.customConfig', // will use options from Yii::$app->params['ckeditor.customConfig']
 ]) ?>
 ```
+
+## Yii aliases
+
+You can use aliases in `contentsCss`, `customConfig` and `stylesSet` options. They will be automatically
+translated by `Yii::getAlias()`:
+
+```php
+<?= alexantr\ckeditor\CKEditor::widget([
+    'name' => 'attributeName',
+    'clientOptions' => [
+        'customConfig' => '@web/js/myconfig.js',
+        'contentsCss' => ['@web/css/mysitestyles.css', '@web/css/anotherfile.css'],
+        'stylesSet' => 'mystyles:@web/editorstyles/styles.js',
+    ],
+]) ?>
+```
+
+> **Note:** Path alias must be Web-accessible. Only `@web` alias is Web-accessible in predefined aliases. 
