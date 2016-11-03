@@ -94,4 +94,88 @@ class CKEditorTest extends TestCase
         $test = 'CKEDITOR.replace(\'post-message\', {"stylesSet":false});';
         $this->assertContains($test, $out);
     }
+
+    public function testRenderWithContentsCssAlias()
+    {
+        Yii::setAlias('@web', '/test');
+
+        $model = new Post();
+        $widget = CKEditor::widget([
+            'model' => $model,
+            'attribute' => 'message',
+            'clientOptions' => [
+                'contentsCss' => '@web/css/style.css',
+            ],
+        ]);
+
+        $out = Yii::$app->view->renderFile('@tests/data/views/layout.php', [
+            'content' => $widget,
+        ]);
+
+        $test = 'CKEDITOR.replace(\'post-message\', {"contentsCss":"/test/css/style.css"});';
+        $this->assertContains($test, $out);
+    }
+
+    public function testRenderWithContentsCssAliasesArray()
+    {
+        Yii::setAlias('@web', '/test');
+
+        $model = new Post();
+        $widget = CKEditor::widget([
+            'model' => $model,
+            'attribute' => 'message',
+            'clientOptions' => [
+                'contentsCss' => ['@web/css/style1.css', '/test/css/style2.css'],
+            ],
+        ]);
+
+        $out = Yii::$app->view->renderFile('@tests/data/views/layout.php', [
+            'content' => $widget,
+        ]);
+
+        $test = 'CKEDITOR.replace(\'post-message\', {"contentsCss":["/test/css/style1.css","/test/css/style2.css"]});';
+        $this->assertContains($test, $out);
+    }
+
+    public function testRenderWithCustomConfigAlias()
+    {
+        Yii::setAlias('@web', '/test');
+
+        $model = new Post();
+        $widget = CKEditor::widget([
+            'model' => $model,
+            'attribute' => 'message',
+            'clientOptions' => [
+                'customConfig' => '@web/js/custom.js',
+            ],
+        ]);
+
+        $out = Yii::$app->view->renderFile('@tests/data/views/layout.php', [
+            'content' => $widget,
+        ]);
+
+        $test = 'CKEDITOR.replace(\'post-message\', {"customConfig":"/test/js/custom.js"});';
+        $this->assertContains($test, $out);
+    }
+
+    public function testRenderWithStylesSetAlias()
+    {
+        Yii::setAlias('@web', '/test');
+
+        $model = new Post();
+        $widget = CKEditor::widget([
+            'model' => $model,
+            'attribute' => 'message',
+            'clientOptions' => [
+                'stylesSet' => 'testStyle:@web/js/styles.js',
+            ],
+        ]);
+
+        $out = Yii::$app->view->renderFile('@tests/data/views/layout.php', [
+            'content' => $widget,
+        ]);
+
+        $test = 'CKEDITOR.replace(\'post-message\', {"stylesSet":"testStyle:/test/js/styles.js"});';
+        $this->assertContains($test, $out);
+    }
 }
