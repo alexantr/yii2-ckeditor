@@ -2,6 +2,11 @@
 
 This extension renders a [CKEditor](http://ckeditor.com/) widget for [Yii framework 2.0](http://www.yiiframework.com).
 
+[![Latest Stable Version](https://poser.pugx.org/alexantr/yii2-ckeditor/v/stable)](https://packagist.org/packages/alexantr/yii2-ckeditor)
+[![Total Downloads](https://poser.pugx.org/alexantr/yii2-ckeditor/downloads)](https://packagist.org/packages/alexantr/yii2-ckeditor)
+[![License](https://poser.pugx.org/alexantr/yii2-ckeditor/license)](https://packagist.org/packages/alexantr/yii2-ckeditor)
+[![Build Status](https://travis-ci.org/alexantr/yii2-ckeditor.svg?branch=master)](https://travis-ci.org/alexantr/yii2-ckeditor)
+
 ## Installation
 
 Install extension through [composer](http://getcomposer.org/):
@@ -77,4 +82,4 @@ translated by `Yii::getAlias()`:
 ]) ?>
 ```
 
-> **Note:** Path alias must be Web-accessible. Only `@web` alias is Web-accessible in predefined aliases. 
+> **Note:** Path alias must be web-accessible. Only `@web` alias is web-accessible from predefined aliases. 
