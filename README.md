@@ -68,16 +68,24 @@ attribute for this functionality:
 
 ## Yii aliases
 
-You can use aliases in `contentsCss`, `customConfig` and `stylesSet` options. They will be automatically
-translated by `Yii::getAlias()`:
+You can use aliases in `contentsCss`, `customConfig`, `stylesSet` and `templates_files` options.
+They will be automatically translated by `Yii::getAlias()`:
 
 ```php
 <?= alexantr\ckeditor\CKEditor::widget([
     'name' => 'attributeName',
     'clientOptions' => [
         'customConfig' => '@web/js/myconfig.js',
-        'contentsCss' => ['@web/css/mysitestyles.css', '@web/css/anotherfile.css'],
+        'contentsCss' => [
+            '@web/css/mysitestyles.css',
+            '@web/css/anotherfile.css'
+        ],
         'stylesSet' => 'mystyles:@web/editorstyles/styles.js',
+        'extraPlugins' => 'templates',
+        'templates_files' => [
+            '@web/editor_templates/site_default.js',
+            '@web/editor_templates/site_custom.js',
+        ],
     ],
 ]) ?>
 ```

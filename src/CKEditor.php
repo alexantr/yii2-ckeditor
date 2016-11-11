@@ -74,36 +74,72 @@ class CKEditor extends InputWidget
     }
 
     /**
-     * Translates path aliases in 'contentsCss', 'customConfig' and 'stylesSet' options
+     * Translates path aliases
      */
     protected function translateAliases()
     {
-        // Translates alias(es) in 'contentsCss'
-        if (!empty($this->clientOptions['contentsCss'])) {
-            if (is_array($this->clientOptions['contentsCss'])) {
-                $translated = [];
-                foreach ($this->clientOptions['contentsCss'] as $alias) {
-                    if (strpos($alias, '@') === 0) {
-                        $translated[] = Yii::getAlias($alias);
-                    } else {
-                        $translated[] = $alias;
-                    }
-                }
-                $this->clientOptions['contentsCss'] = $translated;
-            } elseif (strpos($this->clientOptions['contentsCss'], '@') === 0) {
-                $this->clientOptions['contentsCss'] = Yii::getAlias($this->clientOptions['contentsCss']);
-            }
+        if (isset($this->clientOptions['contentsCss'])) {
+            $this->translateAliasesContentsCss();
         }
-        // Translates alias in 'customConfig'
-        if (!empty($this->clientOptions['customConfig']) && strpos($this->clientOptions['customConfig'], '@') === 0) {
+        if (isset($this->clientOptions['customConfig'])) {
+            $this->translateAliasCustomConfig();
+        }
+        if (isset($this->clientOptions['stylesSet'])) {
+            $this->translateAliasStylesSet();
+        }
+        if (isset($this->clientOptions['templates_files'])) {
+            $this->translateAliasesTemplatesFiles();
+        }
+    }
+
+    /**
+     * Translates alias(es) in 'contentsCss'
+     */
+    protected function translateAliasesContentsCss()
+    {
+        if (is_array($this->clientOptions['contentsCss'])) {
+            foreach ($this->clientOptions['contentsCss'] as $k => $alias) {
+                if (strpos($alias, '@') === 0) {
+                    $this->clientOptions['contentsCss'][$k] = Yii::getAlias($alias);
+                }
+            }
+        } elseif (strpos($this->clientOptions['contentsCss'], '@') === 0) {
+            $this->clientOptions['contentsCss'] = Yii::getAlias($this->clientOptions['contentsCss']);
+        }
+    }
+
+    /**
+     * Translates alias in 'customConfig'
+     */
+    protected function translateAliasCustomConfig()
+    {
+        if (strpos($this->clientOptions['customConfig'], '@') === 0) {
             $this->clientOptions['customConfig'] = Yii::getAlias($this->clientOptions['customConfig']);
         }
-        // Translates alias in 'stylesSet'
-        if (!empty($this->clientOptions['stylesSet']) && is_string($this->clientOptions['stylesSet'])) {
-            if (strpos($this->clientOptions['stylesSet'], ':@') > 0) {
-                $alias_parts = explode(':', $this->clientOptions['stylesSet'], 2);
-                if (isset($alias_parts[1]) && strpos($alias_parts[1], '@') === 0) {
-                    $this->clientOptions['stylesSet'] = $alias_parts[0] . ':' . Yii::getAlias($alias_parts[1]);
+    }
+
+    /**
+     * Translates alias in 'stylesSet'
+     */
+    protected function translateAliasStylesSet()
+    {
+        if (is_string($this->clientOptions['stylesSet']) && strpos($this->clientOptions['stylesSet'], ':@') > 0) {
+            $alias_parts = explode(':', $this->clientOptions['stylesSet'], 2);
+            if (isset($alias_parts[1]) && strpos($alias_parts[1], '@') === 0) {
+                $this->clientOptions['stylesSet'] = $alias_parts[0] . ':' . Yii::getAlias($alias_parts[1]);
+            }
+        }
+    }
+
+    /**
+     * Translates aliases in 'templates_files'
+     */
+    protected function translateAliasesTemplatesFiles()
+    {
+        if (is_array($this->clientOptions['templates_files'])) {
+            foreach ($this->clientOptions['templates_files'] as $k => $alias) {
+                if (strpos($alias, '@') === 0) {
+                    $this->clientOptions['templates_files'][$k] = Yii::getAlias($alias);
                 }
             }
         }
