@@ -4,25 +4,24 @@ namespace tests;
 
 use alexantr\ckeditor\CKEditorWidgetAsset;
 use yii\web\AssetBundle;
-use Yii;
 
-/**
- * Tests for CKEditorWidgetAsset
- */
 class CKEditorWidgetAssetTest extends TestCase
 {
     public function testRegister()
     {
-        $view = Yii::$app->view;
+        $view = $this->mockView();
 
         $this->assertEmpty($view->assetBundles);
+
         CKEditorWidgetAsset::register($view);
+
+        // JqueryAsset, YiiAsset, CKEditorAsset, CKEditorWidgetAsset
         $this->assertEquals(4, count($view->assetBundles));
 
-        $this->assertArrayHasKey('yii\\web\\JqueryAsset', $view->assetBundles);
+        $this->assertArrayHasKey('alexantr\\ckeditor\\CKEditorWidgetAsset', $view->assetBundles);
         $this->assertTrue($view->assetBundles['alexantr\\ckeditor\\CKEditorWidgetAsset'] instanceof AssetBundle);
 
-        $out = $view->renderFile('@tests/data/views/layout.php', ['content' => '']);
+        $out = $view->renderFile('@tests/data/views/layout.php');
 
         $this->assertContains('/ckeditor.js', $out);
         $this->assertContains('/adapters/jquery.js', $out);
