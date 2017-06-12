@@ -62,47 +62,40 @@ attribute for this functionality:
 ```php
 <?= alexantr\ckeditor\CKEditor::widget([
     'name' => 'attributeName',
-    'presetName' => 'ckeditor.customConfig', // will use options from Yii::$app->params['ckeditor.customConfig']
+    'presetName' => 'ckeditor.customConfig', // will use Yii::$app->params['ckeditor.customConfig']
 ]) ?>
 ```
 
-## Global configuration examles
+## Global configuration examples
 
-Ususal array:
+Usual array:
 
 ```php
+'params' => [
     'ckeditor.customConfig' => [
         'customConfig' => '/js/myconfig.js',
-        'contentsCss' => [
-            '/css/mysitestyles.css',
-            '/css/anotherfile.css'
-        ],
         'stylesSet' => 'mystyles:https://www.example.com/editorstyles/styles.js',
-        'extraPlugins' => 'templates',
-        'templates_files' => [
-            '/editor_templates/site_default.js',
-            'https://www.example.com/user_templates.js',
-        ],
     ],
+]
 ```
 
-> **Note:** Aliases support was removed in version 1.1. Use callable string or Closure instead.
+> **Note:** Aliases support was removed in version 1.1. Use callable strings or anonymous functions instead.
 
 Callable string:
 
 ```php
-    'ckeditor.customConfig' => 'app\helpers\Editor::getGlobalConfig',
+'ckeditor.customConfig' => 'app\helpers\Editor::getGlobalConfig',
 ```
 
 > **Note:** Method `Editor::getGlobalConfig` must return array.
 
-Closure:
+Anonymous function:
 
 ```php
-    'ckeditor.customConfig' => function () {
-        return [
-            'customConfig' => Yii::getAlias('@web/js/myconfig.js'),
-            'stylesSet' => 'mystyles:' . Yii::getAlias('@web/editorstyles/styles.js'),
-        ];
-    },
+'ckeditor.customConfig' => function () {
+    return [
+        'customConfig' => Yii::getAlias('@web/js/myconfig.js'),
+        'stylesSet' => 'mystyles:' . Yii::getAlias('@web/editorstyles/styles.js'),
+    ];
+},
 ```
