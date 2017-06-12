@@ -12,7 +12,7 @@ This extension renders a [CKEditor](http://ckeditor.com/) widget for [Yii framew
 Install extension through [composer](http://getcomposer.org/):
 
 ```
-composer require alexantr/yii2-ckeditor
+composer require "alexantr/yii2-ckeditor:^1.1"
 ```
 
 ## CKEditor version
@@ -66,28 +66,43 @@ attribute for this functionality:
 ]) ?>
 ```
 
-## Yii aliases
+## Global configuration examles
 
-You can use aliases in `contentsCss`, `customConfig`, `stylesSet` and `templates_files` options.
-They will be automatically translated by `Yii::getAlias()`:
+Ususal array:
 
 ```php
-<?= alexantr\ckeditor\CKEditor::widget([
-    'name' => 'attributeName',
-    'clientOptions' => [
-        'customConfig' => '@web/js/myconfig.js',
+    'ckeditor.customConfig' => [
+        'customConfig' => '/js/myconfig.js',
         'contentsCss' => [
-            '@web/css/mysitestyles.css',
-            '@web/css/anotherfile.css'
+            '/css/mysitestyles.css',
+            '/css/anotherfile.css'
         ],
-        'stylesSet' => 'mystyles:@web/editorstyles/styles.js',
+        'stylesSet' => 'mystyles:https://www.example.com/editorstyles/styles.js',
         'extraPlugins' => 'templates',
         'templates_files' => [
-            '@web/editor_templates/site_default.js',
-            '@web/editor_templates/site_custom.js',
+            '/editor_templates/site_default.js',
+            'https://www.example.com/user_templates.js',
         ],
     ],
-]) ?>
 ```
 
-> **Note:** Path alias must be web-accessible. Only `@web` alias is web-accessible from predefined aliases. 
+> **Note:** Aliases support was removed in version 1.1. Use callable string or Closure instead.
+
+Callable string:
+
+```php
+    'ckeditor.customConfig' => 'app\helpers\Editor::getGlobalConfig',
+```
+
+> **Note:** Method `Editor::getGlobalConfig` must return array.
+
+Closure:
+
+```php
+    'ckeditor.customConfig' => function () {
+        return [
+            'customConfig' => Yii::getAlias('@web/js/myconfig.js'),
+            'stylesSet' => 'mystyles:' . Yii::getAlias('@web/editorstyles/styles.js'),
+        ];
+    },
+```

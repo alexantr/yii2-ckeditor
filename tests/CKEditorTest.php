@@ -63,17 +63,56 @@ class CKEditorTest extends TestCase
         $this->assertContains($expected, $out);
     }
 
-    public function testPresetName()
+    public function testPresetAsArray()
     {
-        $view = $this->mockView();
-
         $this->mockWebApplication([
             'params' => [
                 'ckeditor.testConfig' => [
-                    'stylesSet' => false,
+                    'contentsCss' => '/test/css/style.css',
+                    'customConfig' => '/test/js/custom.js',
+                    'stylesSet' => 'mystyles',
                 ],
-            ]
+            ],
         ]);
+
+        $this->assertContainsPresetConfig();
+    }
+
+    public function testPresetAsString()
+    {
+        $this->mockWebApplication([
+            'params' => [
+                'ckeditor.testConfig' => 'tests\data\helpers\TestHelper::getConfig',
+            ],
+        ]);
+
+        $this->assertContainsPresetConfig();
+    }
+
+    public function testPresetAsClosure()
+    {
+        $this->mockWebApplication([
+            'params' => [
+                'ckeditor.testConfig' => function () {
+                    return [
+                        'contentsCss' => Yii::getAlias('@web/css/style.css'),
+                        'customConfig' => Yii::getAlias('@web/js/custom.js'),
+                        'stylesSet' => 'mystyles',
+                    ];
+                },
+            ],
+        ]);
+
+        $this->assertContainsPresetConfig();
+    }
+
+    /**
+     * Check preset
+     */
+    private function assertContainsPresetConfig()
+    {
+        Yii::setAlias('@web', '/test');
+        $view = $this->mockView();
 
         $model = new Post();
         $widget = CKEditor::widget([
@@ -81,30 +120,8 @@ class CKEditorTest extends TestCase
             'model' => $model,
             'attribute' => 'message',
             'presetName' => 'ckeditor.testConfig',
-        ]);
-
-        $out = $view->renderFile('@tests/data/views/layout.php', [
-            'content' => $widget,
-        ]);
-
-        $expected = 'CKEDITOR.replace(\'post-message\', {"stylesSet":false});';
-        $this->assertContains($expected, $out);
-    }
-
-    public function testAliases()
-    {
-        Yii::setAlias('@web', '/test');
-        $view = $this->mockView();
-
-        $model = new Post();
-        $widget = CKEditor::widget([
-            'view' => $view,
-            'model' => $model,
-            'attribute' => 'message',
             'clientOptions' => [
-                'contentsCss' => '@web/css/style.css',
-                'customConfig' => '@web/js/custom.js',
-                'stylesSet' => 'testStyle:@web/js/styles.js',
+                'stylesSet' => false,
             ],
         ]);
 
@@ -112,53 +129,12 @@ class CKEditorTest extends TestCase
             'content' => $widget,
         ]);
 
-        $expected = 'CKEDITOR.replace(\'post-message\', {"contentsCss":"/test/css/style.css","customConfig":"/test/js/custom.js","stylesSet":"testStyle:/test/js/styles.js"});';
-        $this->assertContains($expected, $out);
-    }
-
-    public function testContentsCssAliasesArray()
-    {
-        Yii::setAlias('@web', '/test');
-        $view = $this->mockView();
-
-        $model = new Post();
-        $widget = CKEditor::widget([
-            'view' => $view,
-            'model' => $model,
-            'attribute' => 'message',
-            'clientOptions' => [
-                'contentsCss' => ['@web/css/style1.css', '/test/css/style2.css'],
-            ],
-        ]);
-
-        $out = $view->renderFile('@tests/data/views/layout.php', [
-            'content' => $widget,
-        ]);
-
-        $expected = 'CKEDITOR.replace(\'post-message\', {"contentsCss":["/test/css/style1.css","/test/css/style2.css"]});';
-        $this->assertContains($expected, $out);
-    }
-
-    public function testTemplatesFilesAliasesArray()
-    {
-        Yii::setAlias('@web', '/test');
-        $view = $this->mockView();
-
-        $model = new Post();
-        $widget = CKEditor::widget([
-            'view' => $view,
-            'model' => $model,
-            'attribute' => 'message',
-            'clientOptions' => [
-                'templates_files' => ['@web/js/templates1.js', '/test/js/templates2.js'],
-            ],
-        ]);
-
-        $out = $view->renderFile('@tests/data/views/layout.php', [
-            'content' => $widget,
-        ]);
-
-        $expected = 'CKEDITOR.replace(\'post-message\', {"templates_files":["/test/js/templates1.js","/test/js/templates2.js"]});';
+        $expected_options = [
+            '"contentsCss":"/test/css/style.css"',
+            '"customConfig":"/test/js/custom.js"',
+            '"stylesSet":false',
+        ];
+        $expected = 'CKEDITOR.replace(\'post-message\', {' . implode(',', $expected_options) . '});';
         $this->assertContains($expected, $out);
     }
 }
