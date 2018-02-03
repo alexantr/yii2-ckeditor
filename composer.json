@@ -15,8 +15,7 @@
     "source": "https://github.com/alexantr/yii2-ckeditor"
   },
   "require": {
-    "yiisoft/yii2": "~2.0.5",
-    "ckeditor/ckeditor": "^4.5"
+    "yiisoft/yii2": "~2.0.5"
   },
   "autoload": {
     "psr-4": {
@@ -25,7 +24,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.1.x-dev"
+      "dev-master": "2.0.x-dev"
     },
     "asset-installer-paths": {
       "npm-asset-library": "vendor/npm",

@@ -10,15 +10,13 @@ use yii\web\AssetBundle;
  */
 class CKEditorAsset extends AssetBundle
 {
-    public $sourcePath = '@vendor/ckeditor/ckeditor';
+    public $basePath = '@webroot';
+    public $baseUrl = '@web';
     public $js = [
-        'ckeditor.js',
-        'adapters/jquery.js',
+        'https://cdn.ckeditor.com/4.8.0/standard-all/ckeditor.js',
+        'https://cdn.ckeditor.com/4.8.0/standard-all/adapters/jquery.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',
-    ];
-    public $publishOptions = [
-        'except' => ['samples/'],
     ];
 }

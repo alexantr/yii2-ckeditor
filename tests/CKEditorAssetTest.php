@@ -23,7 +23,7 @@ class CKEditorAssetTest extends TestCase
 
         $out = $view->renderFile('@tests/data/views/layout.php');
 
-        $this->assertContains('/ckeditor.js', $out);
-        $this->assertContains('/adapters/jquery.js', $out);
+        $this->assertContains('/standard-all/ckeditor.js', $out);
+        $this->assertContains('/standard-all/adapters/jquery.js', $out);
     }
 }

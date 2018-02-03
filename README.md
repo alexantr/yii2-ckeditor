@@ -12,7 +12,7 @@ This extension renders a [CKEditor](http://ckeditor.com/) widget for [Yii framew
 Install extension through [composer](http://getcomposer.org/):
 
 ```
-composer require "alexantr/yii2-ckeditor:^1.1"
+composer require alexantr/yii2-ckeditor
 ```
 
 ## CKEditor version
@@ -20,6 +20,8 @@ composer require "alexantr/yii2-ckeditor:^1.1"
 This extension works with stable `standard-all` build. The `standard-all` build includes all official CKSource
 plugins with only those from the `standard` installation preset compiled into the `ckeditor.js` file and
 enabled in the configuration.
+
+> **Note:** Since version 2.0 the extension loads CKEditor from [CDN](https://cdn.ckeditor.com/).
 
 ## Usage
 
