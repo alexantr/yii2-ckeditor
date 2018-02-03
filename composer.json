@@ -22,13 +22,15 @@
       "alexantr\\ckeditor\\": "src"
     }
   },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
   "extra": {
     "branch-alias": {
       "dev-master": "2.0.x-dev"
-    },
-    "asset-installer-paths": {
-      "npm-asset-library": "vendor/npm",
-      "bower-asset-library": "vendor/bower"
     }
   }
 }
