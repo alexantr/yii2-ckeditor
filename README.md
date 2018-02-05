@@ -55,49 +55,16 @@ If you want to use the CKEditor widget in an ActiveForm, it can be done like thi
 <?= $form->field($model, 'attributeName')->widget(alexantr\ckeditor\CKEditor::className()) ?>
 ```
 
-## Using global configuration
+## Using global configuration (presets)
 
 To avoid repeating identical configuration in every widget you can set global configuration in
-`Yii::$app->params`. Options from widget's `clientOptions` will be merged with this configuration. Use `presetName`
-attribute for this functionality:
+`@app/config/ckeditor.php`. Options from widget's `clientOptions` will be merged with this configuration.
+
+You can change default path with `presetPath` attribute:
 
 ```php
 <?= alexantr\ckeditor\CKEditor::widget([
     'name' => 'attributeName',
-    'presetName' => 'ckeditor.customConfig', // will use Yii::$app->params['ckeditor.customConfig']
+    'presetPath' => '@backend/config/my-ckeditor-config.php',
 ]) ?>
-```
-
-## Global configuration examples
-
-Usual array:
-
-```php
-'params' => [
-    'ckeditor.customConfig' => [
-        'customConfig' => '/js/myconfig.js',
-        'stylesSet' => 'mystyles:https://www.example.com/editorstyles/styles.js',
-    ],
-]
-```
-
-> **Note:** Aliases support was removed in version 1.1. Use callable strings or anonymous functions instead.
-
-Callable string:
-
-```php
-'ckeditor.customConfig' => 'app\helpers\Editor::getGlobalConfig',
-```
-
-> **Note:** Method `Editor::getGlobalConfig` must return array.
-
-Anonymous function:
-
-```php
-'ckeditor.customConfig' => function () {
-    return [
-        'customConfig' => Yii::getAlias('@web/js/myconfig.js'),
-        'stylesSet' => 'mystyles:' . Yii::getAlias('@web/editorstyles/styles.js'),
-    ];
-},
 ```
