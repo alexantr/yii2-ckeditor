@@ -1,4 +1,4 @@
-if (typeof alexantr == "undefined" || !alexantr) {
+if (typeof alexantr === 'undefined' || !alexantr) {
     var alexantr = {};
 }
 
@@ -11,16 +11,18 @@ alexantr.ckEditorWidget = (function ($) {
                 return false;
             });
         },
-        registerCsrfImageUploadHandler: function () {
-            yii & $(document).off('click', '.cke_dialog_tabs a[id^="cke_Upload_"]').on('click', '.cke_dialog_tabs a[id^="cke_Upload_"]', function () {
+        registerCsrfUploadHandler: function () {
+            var selector = '.cke_dialog_tabs a[id^="cke_Upload_"], .cke_dialog_tabs a[id^="cke_upload_"]';
+            yii && $(document).off('click', selector).on('click', selector, function () {
+                var csrfParam = yii.getCsrfParam(),
+                    csrfToken = yii.getCsrfToken();
                 var $forms = $('.cke_dialog_ui_input_file iframe').contents().find('form');
-                var csrfName = yii.getCsrfParam();
                 $forms.each(function () {
-                    if (!$(this).find('input[name=' + csrfName + ']').length) {
+                    if (!$(this).find('input[name=' + csrfParam + ']').length) {
                         var csrfTokenInput = $('<input/>').attr({
-                            'type': 'hidden',
-                            'name': csrfName
-                        }).val(yii.getCsrfToken());
+                            type: 'hidden',
+                            name: csrfParam
+                        }).val(csrfToken);
                         $(this).append(csrfTokenInput);
                     }
                 });

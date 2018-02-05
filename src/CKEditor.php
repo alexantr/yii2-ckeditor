@@ -66,7 +66,7 @@ class CKEditor extends InputWidget
         $js[] = "alexantr.ckEditorWidget.registerOnChangeHandler('$id');";
 
         if (isset($this->clientOptions['filebrowserUploadUrl']) || isset($this->clientOptions['filebrowserImageUploadUrl'])) {
-            $js[] = "alexantr.ckEditorWidget.registerCsrfImageUploadHandler();";
+            $js[] = "alexantr.ckEditorWidget.registerCsrfUploadHandler();";
         }
 
         $view->registerJs(implode("\n", $js));

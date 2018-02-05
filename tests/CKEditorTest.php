@@ -59,7 +59,7 @@ class CKEditorTest extends TestCase
         $expected = 'alexantr.ckEditorWidget.registerOnChangeHandler(\'post-message\');';
         $this->assertContains($expected, $out);
 
-        $expected = 'alexantr.ckEditorWidget.registerCsrfImageUploadHandler();';
+        $expected = 'alexantr.ckEditorWidget.registerCsrfUploadHandler();';
         $this->assertContains($expected, $out);
     }
 
