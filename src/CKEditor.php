@@ -19,22 +19,10 @@ class CKEditor extends InputWidget
      * @see http://docs.ckeditor.com/#!/api/CKEDITOR.config
      */
     public $clientOptions = [];
-
     /**
-     * @var string param name in `Yii::$app->params` with CKEditor predefined config.
+     * @var string Path to preset with CKEditor options
      */
-    public $presetName;
-
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
-        if ($this->presetName !== null) {
-            $this->clientOptions = ArrayHelper::merge($this->getPresetConfig($this->presetName), $this->clientOptions);
-        }
-    }
+    public $presetPath = '@app/config/ckeditor.php';
 
     /**
      * @inheritdoc
@@ -42,11 +30,12 @@ class CKEditor extends InputWidget
     public function run()
     {
         if ($this->hasModel()) {
-            echo Html::activeTextarea($this->model, $this->attribute, $this->options);
+            $content = Html::activeTextarea($this->model, $this->attribute, $this->options);
         } else {
-            echo Html::textarea($this->name, $this->value, $this->options);
+            $content = Html::textarea($this->name, $this->value, $this->options);
         }
         $this->registerPlugin();
+        return $content;
     }
 
     /**
@@ -59,13 +48,14 @@ class CKEditor extends InputWidget
         $view = $this->getView();
         CKEditorWidgetAsset::register($view);
 
-        $encodedOptions = !empty($this->clientOptions) ? Json::encode($this->clientOptions) : '{}';
+        $clientOptions = ArrayHelper::merge($this->getPresetConfig(), $this->clientOptions);
+        $encodedOptions = !empty($clientOptions) ? Json::encode($clientOptions) : '{}';
 
         $js = [];
         $js[] = "CKEDITOR.replace('$id', $encodedOptions);";
         $js[] = "alexantr.ckEditorWidget.registerOnChangeHandler('$id');";
 
-        if (isset($this->clientOptions['filebrowserUploadUrl']) || isset($this->clientOptions['filebrowserImageUploadUrl'])) {
+        if (isset($clientOptions['filebrowserUploadUrl']) || isset($clientOptions['filebrowserImageUploadUrl'])) {
             $js[] = "alexantr.ckEditorWidget.registerCsrfUploadHandler();";
         }
 
@@ -74,15 +64,17 @@ class CKEditor extends InputWidget
 
     /**
      * Get options config from preset
-     * @param string $presetName
      * @return array
      */
-    protected function getPresetConfig($presetName)
+    protected function getPresetConfig()
     {
-        $config = isset(Yii::$app->params[$presetName]) ? Yii::$app->params[$presetName] : [];
-        if ((is_string($config) && is_callable($config)) || $config instanceof \Closure) {
-            $config = call_user_func($config);
+        if (!empty($this->presetPath)) {
+            $configPath = Yii::getAlias($this->presetPath);
+            if (is_file($configPath)) {
+                $config = include $configPath;
+                return is_array($config) ? $config : [];
+            }
         }
-        return is_array($config) ? $config : [];
+        return [];
     }
 }

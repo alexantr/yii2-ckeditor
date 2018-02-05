@@ -12,10 +12,9 @@ class CKEditorTest extends TestCase
     {
         $view = $this->mockView();
 
-        $model = new Post();
         $out = CKEditor::widget([
             'view' => $view,
-            'model' => $model,
+            'model' => new Post(),
             'attribute' => 'message',
         ]);
         $expected = '<textarea id="post-message" name="Post[message]"></textarea>';
@@ -38,14 +37,13 @@ class CKEditorTest extends TestCase
         $this->assertEqualsWithoutLE($expected, $out);
     }
 
-    public function testRegisterHandlers()
+    public function testRegisterHandlersAndClientOptions()
     {
         $view = $this->mockView();
 
-        $model = new Post();
         $widget = CKEditor::widget([
             'view' => $view,
-            'model' => $model,
+            'model' => new Post(),
             'attribute' => 'message',
             'clientOptions' => [
                 'filebrowserUploadUrl' => '/',
@@ -61,65 +59,21 @@ class CKEditorTest extends TestCase
 
         $expected = 'alexantr.ckEditorWidget.registerCsrfUploadHandler();';
         $this->assertContains($expected, $out);
+
+        $expected = 'CKEDITOR.replace(\'post-message\', {"filebrowserUploadUrl":"/"});';
+        $this->assertContains($expected, $out);
     }
 
-    public function testPresetAsArray()
+    public function testDefaultPresetPathWithOverride()
     {
-        $this->mockWebApplication([
-            'params' => [
-                'ckeditor.testConfig' => [
-                    'contentsCss' => '/test/css/style.css',
-                    'customConfig' => '/test/js/custom.js',
-                    'stylesSet' => 'mystyles',
-                ],
-            ],
-        ]);
+        Yii::setAlias('@app/config', __DIR__ . '/data/config');
 
-        $this->assertContainsPresetConfig();
-    }
-
-    public function testPresetAsString()
-    {
-        $this->mockWebApplication([
-            'params' => [
-                'ckeditor.testConfig' => 'tests\data\helpers\TestHelper::getConfig',
-            ],
-        ]);
-
-        $this->assertContainsPresetConfig();
-    }
-
-    public function testPresetAsClosure()
-    {
-        $this->mockWebApplication([
-            'params' => [
-                'ckeditor.testConfig' => function () {
-                    return [
-                        'contentsCss' => Yii::getAlias('@web/css/style.css'),
-                        'customConfig' => Yii::getAlias('@web/js/custom.js'),
-                        'stylesSet' => 'mystyles',
-                    ];
-                },
-            ],
-        ]);
-
-        $this->assertContainsPresetConfig();
-    }
-
-    /**
-     * Check preset
-     */
-    private function assertContainsPresetConfig()
-    {
-        Yii::setAlias('@web', '/test');
         $view = $this->mockView();
 
-        $model = new Post();
         $widget = CKEditor::widget([
             'view' => $view,
-            'model' => $model,
+            'model' => new Post(),
             'attribute' => 'message',
-            'presetName' => 'ckeditor.testConfig',
             'clientOptions' => [
                 'stylesSet' => false,
             ],
@@ -130,9 +84,37 @@ class CKEditorTest extends TestCase
         ]);
 
         $expected_options = [
-            '"contentsCss":"/test/css/style.css"',
-            '"customConfig":"/test/js/custom.js"',
+            '"contentsCss":"/css/style.css"',
+            //'"customConfig":"/js/custom.js"',
             '"stylesSet":false',
+        ];
+        $expected = 'CKEDITOR.replace(\'post-message\', {' . implode(',', $expected_options) . '});';
+        $this->assertContains($expected, $out);
+    }
+
+    public function testCustomPresetPath()
+    {
+        if (isset(Yii::$aliases['@app/config'])) {
+            unset(Yii::$aliases['@app/config']);
+        }
+
+        $view = $this->mockView();
+
+        $widget = CKEditor::widget([
+            'view' => $view,
+            'model' => new Post(),
+            'attribute' => 'message',
+            'presetPath' => '@app/data/config/other.php',
+        ]);
+
+        $out = $view->renderFile('@tests/data/views/layout.php', [
+            'content' => $widget,
+        ]);
+
+        $expected_options = [
+            '"contentsCss":"/css/style.css"',
+            '"customConfig":"/js/custom.js"',
+            '"stylesSet":"otherstyles"',
         ];
         $expected = 'CKEDITOR.replace(\'post-message\', {' . implode(',', $expected_options) . '});';
         $this->assertContains($expected, $out);
