@@ -23,6 +23,6 @@ class WidgetAssetTest extends TestCase
 
         $out = $view->renderFile('@tests/data/views/layout.php');
 
-        $this->assertContains('/widget.js', $out);
+        $this->assertRegExp('%"/assets/[0-9a-z]+/widget.js"%', $out);
     }
 }

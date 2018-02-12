@@ -55,6 +55,9 @@ class CKEditorTest extends TestCase
             'content' => $widget,
         ]);
 
+        $expected = 'alexantr.ckEditorWidget.setBaseUrl(\'' . CKEditor::$cdnBaseUrl . '\');';
+        $this->assertContains($expected, $out);
+
         $expected = 'alexantr.ckEditorWidget.register(\'post-message\', {"filebrowserUploadUrl":"\/"});';
         $this->assertContains($expected, $out);
 
