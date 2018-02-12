@@ -43,15 +43,14 @@ alexantr.ckEditorWidget = (function ($) {
                 callbacks.push({inputId: inputId, options: options});
                 if (!loading && baseUrl) {
                     loading = true;
-                    $.when(
-                        $.getCachedScript(baseUrl + 'ckeditor.js'),
-                        $.getCachedScript(baseUrl + 'adapters/jquery.js')
-                    ).then(function () {
-                        loaded = true;
-                        loading = false;
-                        for (var i = 0; i < callbacks.length; i++) {
-                            callPlugin(callbacks[i].inputId, callbacks[i].options);
-                        }
+                    $.getCachedScript(baseUrl + 'ckeditor.js').done(function () {
+                        $.getCachedScript(baseUrl + 'adapters/jquery.js').done(function () {
+                            loaded = true;
+                            loading = false;
+                            for (var i = 0; i < callbacks.length; i++) {
+                                callPlugin(callbacks[i].inputId, callbacks[i].options);
+                            }
+                        });
                     });
                 }
             }
