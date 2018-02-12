@@ -4,18 +4,13 @@ namespace alexantr\ckeditor;
 
 use yii\web\AssetBundle;
 
-/**
- * Class CKEditorWidgetAsset
- * @package alexantr\ckeditor
- */
-class CKEditorWidgetAsset extends AssetBundle
+class WidgetAsset extends AssetBundle
 {
     public $sourcePath = '@alexantr/ckeditor/assets';
     public $js = [
-        'ckeditor.widget.js',
+        'widget.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'alexantr\ckeditor\CKEditorAsset',
     ];
 }

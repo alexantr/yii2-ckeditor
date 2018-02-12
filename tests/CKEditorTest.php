@@ -5,6 +5,7 @@ namespace tests;
 use alexantr\ckeditor\CKEditor;
 use tests\data\models\Post;
 use Yii;
+use yii\helpers\Json;
 
 class CKEditorTest extends TestCase
 {
@@ -54,13 +55,10 @@ class CKEditorTest extends TestCase
             'content' => $widget,
         ]);
 
-        $expected = 'alexantr.ckEditorWidget.registerOnChangeHandler(\'post-message\');';
+        $expected = 'alexantr.ckEditorWidget.register(\'post-message\', {"filebrowserUploadUrl":"\/"});';
         $this->assertContains($expected, $out);
 
         $expected = 'alexantr.ckEditorWidget.registerCsrfUploadHandler();';
-        $this->assertContains($expected, $out);
-
-        $expected = 'CKEDITOR.replace(\'post-message\', {"filebrowserUploadUrl":"/"});';
         $this->assertContains($expected, $out);
     }
 
@@ -84,11 +82,10 @@ class CKEditorTest extends TestCase
         ]);
 
         $expected_options = [
-            '"contentsCss":"/css/style.css"',
-            //'"customConfig":"/js/custom.js"',
-            '"stylesSet":false',
+            'contentsCss' => '/css/style.css',
+            'stylesSet' => false,
         ];
-        $expected = 'CKEDITOR.replace(\'post-message\', {' . implode(',', $expected_options) . '});';
+        $expected = 'alexantr.ckEditorWidget.register(\'post-message\', ' . Json::htmlEncode($expected_options) . ');';
         $this->assertContains($expected, $out);
     }
 
@@ -112,11 +109,11 @@ class CKEditorTest extends TestCase
         ]);
 
         $expected_options = [
-            '"contentsCss":"/css/style.css"',
-            '"customConfig":"/js/custom.js"',
-            '"stylesSet":"otherstyles"',
+            'contentsCss' => '/css/style.css',
+            'customConfig' => '/js/custom.js',
+            'stylesSet' => 'otherstyles',
         ];
-        $expected = 'CKEDITOR.replace(\'post-message\', {' . implode(',', $expected_options) . '});';
+        $expected = 'alexantr.ckEditorWidget.register(\'post-message\', ' . Json::htmlEncode($expected_options) . ');';
         $this->assertContains($expected, $out);
     }
 }
