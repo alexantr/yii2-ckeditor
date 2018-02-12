@@ -11,14 +11,11 @@ alexantr.ckEditorWidget = (function ($) {
         loaded = false;
 
     function callPlugin(inputId, options) {
-        $('#' + inputId).ckeditor(options);
-
-        /*CKEDITOR.replace(inputId, options);
-        CKEDITOR && CKEDITOR.instances[inputId] && CKEDITOR.instances[inputId].on('change', function () {
-            CKEDITOR.instances[inputId].updateElement();
-            $('#' + inputId).trigger('change');
-            return false;
-        });*/
+        var $input = $('#' + inputId);
+        $input.ckeditor(options);
+        $input.ckeditor().editor.on('change', function () {
+            $input.trigger('change');
+        });
     }
 
     $.getCachedScript = function (url, options) {
