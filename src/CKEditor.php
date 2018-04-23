@@ -18,7 +18,7 @@ class CKEditor extends InputWidget
     /**
      * @var string CKEditor CDN base URL
      */
-    public static $cdnBaseUrl = 'https://cdn.ckeditor.com/4.8.0/standard-all/';
+    public static $cdnBaseUrl = 'https://cdn.ckeditor.com/4.9.2/standard-all/';
 
     /**
      * @var array CKEditor options
