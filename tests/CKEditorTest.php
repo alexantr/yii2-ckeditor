@@ -55,6 +55,9 @@ class CKEditorTest extends TestCase
             'content' => $widget,
         ]);
 
+        $expected = 'var CKEDITOR_BASEPATH = \'' . CKEditor::$cdnBaseUrl . '\';';
+        $this->assertContains($expected, $out);
+
         $expected = 'alexantr.ckEditorWidget.setBaseUrl(\'' . CKEditor::$cdnBaseUrl . '\');';
         $this->assertContains($expected, $out);
 
