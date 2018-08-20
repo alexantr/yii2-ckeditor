@@ -61,7 +61,7 @@ class CKEditor extends InputWidget
         $view = $this->getView();
         WidgetAsset::register($view);
 
-        $cdnBaseUrl = self::$cdnBaseUrl;
+        $cdnBaseUrl = Html::encode(self::$cdnBaseUrl);
         $encodedOptions = !empty($this->clientOptions) ? Json::htmlEncode($this->clientOptions) : '{}';
 
         $view->registerJs("var CKEDITOR_BASEPATH = '$cdnBaseUrl';", View::POS_HEAD);
