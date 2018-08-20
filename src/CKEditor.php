@@ -64,6 +64,7 @@ class CKEditor extends InputWidget
         $cdnBaseUrl = self::$cdnBaseUrl;
         $encodedOptions = !empty($this->clientOptions) ? Json::htmlEncode($this->clientOptions) : '{}';
 
+        $view->registerJs("var CKEDITOR_BASEPATH = '$cdnBaseUrl';", View::POS_HEAD);
         $view->registerJs("alexantr.ckEditorWidget.setBaseUrl('$cdnBaseUrl');", View::POS_END);
         $view->registerJs("alexantr.ckEditorWidget.register('$id', $encodedOptions);", View::POS_END);
         if (isset($this->clientOptions['filebrowserUploadUrl']) || isset($this->clientOptions['filebrowserImageUploadUrl'])) {
