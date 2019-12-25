@@ -18,7 +18,7 @@ class CKEditor extends InputWidget
     /**
      * @var string CKEditor CDN base URL
      */
-    public static $cdnBaseUrl = 'https://cdn.ckeditor.com/4.10.0/standard-all/';
+    public static $cdnBaseUrl = 'https://cdn.ckeditor.com/4.13.1/standard-all/';
 
     /**
      * @var array CKEditor options
@@ -29,6 +29,10 @@ class CKEditor extends InputWidget
      * @var string Path to preset with CKEditor options. Will be merged with $clientOptions.
      */
     public $presetPath = '@app/config/ckeditor.php';
+    /**
+     * @var string Path to the editor custom installation path.
+     */
+    public $basePath;
 
     /**
      * @inheritdoc
@@ -61,7 +65,7 @@ class CKEditor extends InputWidget
         $view = $this->getView();
         WidgetAsset::register($view);
 
-        $cdnBaseUrl = Html::encode(self::$cdnBaseUrl);
+        $cdnBaseUrl = Html::encode($this->basePath?:self::$cdnBaseUrl);
         $encodedOptions = !empty($this->clientOptions) ? Json::htmlEncode($this->clientOptions) : '{}';
 
         $view->registerJs("var CKEDITOR_BASEPATH = '$cdnBaseUrl';", View::POS_HEAD);
