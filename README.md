@@ -2,11 +2,6 @@
 
 This extension renders a [CKEditor](http://ckeditor.com/) widget for [Yii framework 2.0](http://www.yiiframework.com).
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/alexantr/yii2-ckeditor.svg)](https://packagist.org/packages/alexantr/yii2-ckeditor)
-[![Total Downloads](https://img.shields.io/packagist/dt/alexantr/yii2-ckeditor.svg)](https://packagist.org/packages/alexantr/yii2-ckeditor)
-[![License](https://img.shields.io/github/license/alexantr/yii2-ckeditor.svg)](https://raw.githubusercontent.com/alexantr/yii2-ckeditor/master/LICENSE)
-[![Build Status](https://travis-ci.org/alexantr/yii2-ckeditor.svg?branch=master)](https://travis-ci.org/alexantr/yii2-ckeditor)
-
 ## Installation
 
 Install extension through [composer](http://getcomposer.org/):
